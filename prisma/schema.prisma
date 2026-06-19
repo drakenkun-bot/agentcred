@@ -1,0 +1,74 @@
+// AgentCred data model.
+//
+// Provider is PostgreSQL (works on Vercel + Render). DATABASE_URL must point at a
+// Postgres instance both locally and in production. After setting it, run:
+//   prisma db push        # create the schema
+//   npm run db:seed       # one-time: load the simulated agents (wipes + reseeds)
+// The schema is provider-agnostic (JSON stored as String) so it can move between
+// engines without column-type changes.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  strategyType String
+  symbol       String // primary traded symbol, e.g. BTCUSDT
+  creationDate DateTime
+
+  // --- Reputation scores (0..100), computed by the scoring engine at seed time ---
+  trustScore        Float
+  performanceScore  Float
+  riskScore         Float
+  consistencyScore  Float
+  adaptabilityScore Float
+  survivalScore     Float
+
+  classification    String // e.g. "Reliable Momentum Agent"
+  allocationRating  String // A | B | C | D | F
+  allocationPct     Float
+  allocationReason  String
+
+  // --- Ownership: lowercase EVM wallet address of the user who claimed this
+  // agent (null = unclaimed). Set via the wallet sign-in + claim flow. ---
+  ownerAddress      String?
+
+  // --- Derived blobs (JSON serialized as String for SQLite portability) ---
+  metricsJson    String // PerformanceMetrics
+  regimeJson     String // RegimePerformance[]
+
+  // --- AI report cache (filled lazily by the OpenRouter route) ---
+  reportJson     String? // BehavioralReport
+
+  trades    Trade[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([trustScore])
+  @@index([ownerAddress])
+}
+
+model Trade {
+  id         String   @id @default(cuid())
+  agent      Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId    String
+  timestamp  DateTime
+  symbol     String
+  side       String // long | short
+  entryPrice Float
+  exitPrice  Float
+  pnl        Float
+  size       Float
+  regime     String // MarketRegime
+
+  @@index([agentId])
+  @@index([agentId, timestamp])
+}

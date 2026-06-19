@@ -1,0 +1,30 @@
+# Render Blueprint for AgentCred.
+# Dashboard → New → Blueprint → connect this repo. Render provisions the web
+# service + a managed Postgres and wires DATABASE_URL automatically.
+#
+# After the FIRST successful deploy, seed the data once from the service Shell:
+#   npm run db:seed
+# (Seeding wipes + rebuilds agents and clears wallet links, so it is intentionally
+#  NOT part of the build command.)
+services:
+  - type: web
+    name: agentcred
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npx prisma generate && npx prisma db push && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agentcred-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: OPENROUTER_API_KEY
+        sync: false # set in the dashboard (secret)
+      - key: NODE_VERSION
+        value: "22"
+
+databases:
+  - name: agentcred-db
+    plan: free

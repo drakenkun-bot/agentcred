@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-ink-950 text-slate-200 antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(34, 227, 196, 0.08), transparent 60%),
+      radial-gradient(900px 500px at 0% 0%, rgba(155, 107, 255, 0.07), transparent 55%);
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: rgba(34, 227, 196, 0.3);
+  }
+  /* Slim terminal scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(34, 227, 196, 0.18);
+    border-radius: 99px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(34, 227, 196, 0.35);
+    background-clip: content-box;
+  }
+}
+
+@layer components {
+  /* Frosted terminal panel */
+  .panel {
+    @apply rounded-xl border border-white/[0.06] bg-ink-850/70 backdrop-blur-sm;
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+      0 18px 40px -24px rgba(0, 0, 0, 0.8);
+  }
+  .panel-hover {
+    @apply transition-colors hover:border-glow/30;
+  }
+  .stat-label {
+    @apply text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500;
+  }
+  .mono {
+    font-family: var(--font-mono);
+    font-feature-settings: "tnum" 1, "zero" 1;
+  }
+  .glow-text {
+    color: #5af2dc;
+    text-shadow: 0 0 18px rgba(34, 227, 196, 0.5);
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-xs text-slate-300;
+  }
+  .hairline {
+    @apply border-white/[0.06];
+  }
+}
