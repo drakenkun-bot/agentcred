@@ -23,3 +23,5 @@ next-env.d.ts
 /problem
 /sketch.jfif
 /prompt.txt
+
+.vercel

@@ -1,0 +1,10 @@
+{
+  "experimentalServices": {
+    "agentcred": {
+      "type": "web",
+      "routePrefix": "/",
+      "framework": "nextjs",
+      "buildCommand": "npm ci && npx prisma generate && npx prisma db push && npm run build"
+    }
+  }
+}
